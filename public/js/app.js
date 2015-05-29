@@ -7,4 +7,8 @@ $(document).ready(function() {
 		return false;
 	});
 
+	socket.on('chat message', function(msg) {
+		$('#messages').append('<li>' + msg + '</li');
+	});
+
 });
