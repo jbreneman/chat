@@ -1,5 +1,5 @@
 body {
-	font-family: sans-serif;
+	font-family: 'Open Sans', sans-serif;
 }
 
 li {
@@ -8,7 +8,7 @@ li {
 }
 
 li:nth-child(even) {
-	background: #ccc;
+	background: #eee;
 }
 
 #in {
@@ -19,7 +19,7 @@ li:nth-child(even) {
 }
 
 #in input {
-	width: 90%;
+	width: 80%;
 	font-size: 1.5em;
 	padding: 10px;
 }
