@@ -1,3 +1,16 @@
+body {
+	font-family: sans-serif;
+}
+
+li {
+	padding: 1em;
+	font-size: 1.4em;
+}
+
+li:nth-child(even) {
+	background: #ccc;
+}
+
 #in {
 	width: 100%;
 	position: fixed;
