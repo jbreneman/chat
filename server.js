@@ -6,20 +6,35 @@ var io = require('socket.io')(http);
 //serve static files
 app.use(express.static('public'));
 
-//send index since this is a single page app
+//send index since this is an SPA
 app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
 //socket events
 io.on('connection', function(socket) {
-	console.log('user connected');
 
-	socket.on('disconnect', function() {
-		console.log('user disconnected');
+	socket.on('user connect', function(msg) {
+		io.emit('chat message', msg.username + ' has connected.');
+		
+		var update = {
+			'username': msg.username,
+			'rm': false
+		};
+		io.emit('userlist update', update);
 	});
 
-	socket.on('chat message', function(msg) {
+	socket.on('user disconnect', function(msg) {
+		io.emit('chat message',  msg.username + ' has disconnected.');
+
+		var update = {
+			'username': msg.username,
+			'rm': true
+		};
+		io.emit('userlist update', update);
+	});
+
+	socket.on('chat message', function(msg) {		
 		io.emit('chat message', msg);
 	});
 

@@ -1,39 +1,97 @@
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body {
 	font-family: 'Open Sans', sans-serif;
+}
+
+button {
+	font-size: 1.5em;
+	padding: 10px;
+	background: #ddd;
+	color: #333;
+	border: none;
+	height: 100%;
+	line-height: 1.4;
+	transition: all 0.3s ease;
+}
+
+button:hover {
+	background: #333;
+	color: #ddd;
+	transition: all 0.3s ease;
+}
+
+h2 {
+	font-size: 1.5em;
+	padding: 10px;
+	border-bottom: 5px solid #eee;
+}
+
+input {
+	font-size: 1.5em;
+	padding: 10px;
 }
 
 li {
 	padding: 1em;
 	font-size: 1.4em;
+	overflow: visible;
 }
 
 li:nth-child(even) {
 	background: #eee;
 }
 
+#chat {
+	position: absolute;
+	overflow: auto;
+	max-height: 90%;
+	width: 85%;
+
+}
+
+#user-list {
+	width: 15%;
+	height: 90%;
+	background: #fff;
+	border-left: 5px solid #eee;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
 #in {
 	width: 100%;
-	position: fixed;
+	height: 10%;
+	position: absolute;
 	bottom: 0;
-	background: #111;
+	background: #eee;
 }
 
 #in input {
-	width: 80%;
-	font-size: 1.5em;
-	padding: 10px;
+	width: 85%;
 }
 
-#in button {
-	width: 8.5%;
-	font-size: 1.5em;
-	padding: 10px;
-	background: #333;
-	color: #eee;
-	border: 0;
+#prompt {
+	z-index: 10;
+	position: absolute;
 	height: 100%;
+	width: 100%;
+	background: rgba(0, 0, 0, .8);
 }
 
-#in button:hover {
-	background: #555;
+#prompt div {
+	padding: 10%;
+	background: #fff;
+	width: 50%;
+	height: 50%;
+	margin: auto;
+	position: absolute;
+	top: 0; left: 0; bottom: 0; right: 0;
 }
