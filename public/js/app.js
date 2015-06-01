@@ -6,7 +6,7 @@ $(document).ready(function() {
 
 	$('#username-form').submit(function() {
 		//check for empty input
-		if($('#username').val().length > 0) {
+		if($.trim($('#username').val()).length > 0) {
 			username = $('#username').val();
 			socket.emit('user connect', {'username': username});
 			$('#prompt').hide();
@@ -17,9 +17,11 @@ $(document).ready(function() {
 
 	$('#chat-form').submit(function() {
 
+		var msg = escapeHtml($.trim($('#m').val()));
+
 		//check for empty input
-		if($('#m').val().length > 0) {
-			var msg = $('#m').val();
+		if(msg.length > 0) {
+			
 			//filter
 			var slashMe = /^\/me/;
 
@@ -49,13 +51,22 @@ $(document).ready(function() {
 	});
 
 	socket.on('userlist update', function(update) {
-		
-		if(update.rm === true) {
-			$('#user-list li:contains("' + update.username + '")').remove();
-		} else {
-			$('#user-list ul').append('<li>' + update.username + '</li>');
-		}
+		$('#user-list li').remove();
+
+		var users = update.usernames;
+		users.forEach(function(user) {
+			$('#user-list ul').append('<li>' + user + '</li>');
+		});
 		
 	});
+
+	function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ 	}
 
 });

@@ -11,15 +11,18 @@ app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
+var userList = [];
+
 //socket events
 io.on('connection', function(socket) {
 
 	socket.on('user connect', function(msg) {
 		io.emit('chat message', msg.username + ' has connected.');
+
+		userList.push(msg.username);
 		
 		var update = {
-			'username': msg.username,
-			'rm': false
+			'usernames': userList,
 		};
 		io.emit('userlist update', update);
 	});
@@ -27,9 +30,14 @@ io.on('connection', function(socket) {
 	socket.on('user disconnect', function(msg) {
 		io.emit('chat message',  msg.username + ' has disconnected.');
 
+		var username = userList.indexOf(msg.username);
+
+		if(username != -1) {
+			userList.splice(username, 1);
+		}
+
 		var update = {
-			'username': msg.username,
-			'rm': true
+			'usernames': userList,
 		};
 		io.emit('userlist update', update);
 	});
