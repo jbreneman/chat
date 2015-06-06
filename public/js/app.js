@@ -23,13 +23,14 @@ $(document).ready(function() {
 
 	socket.on('username available', function(usr) {
 		socket.emit('user connect', {'username': usr});
+		username = usr;
 		$('#prompt').hide();
 		$('#m').focus();
 	});
 
 	$('#chat-form').submit(function() {
 
-		var msg = escapeHtml($.trim($('#m').val()));
+		var msg = $.trim($('#m').val());
 
 		//check for empty input
 		if(msg.length > 0) {
@@ -77,14 +78,5 @@ $(document).ready(function() {
 		});
 		
 	});
-
-	function escapeHtml(unsafe) {
-    return unsafe
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
- 	}
 
 });

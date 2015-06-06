@@ -67,7 +67,7 @@ io.on('connection', function(socket) {
 
 		logChat(chatLog, msg);
 
-		io.emit('chat message', msg);
+		io.emit('chat message', escapeHtml(msg));
 	});
 
 });
@@ -83,6 +83,15 @@ function logChat(log, msg) {
 
 	return log;
 }
+
+function escapeHtml(unsafe) {
+return unsafe
+     .replace(/&/g, "&amp;")
+     .replace(/</g, "&lt;")
+     .replace(/>/g, "&gt;")
+     .replace(/"/g, "&quot;")
+     .replace(/'/g, "&#039;");
+	}
 
 http.listen(3000, function() {
 	console.log('Server started on :3000')
