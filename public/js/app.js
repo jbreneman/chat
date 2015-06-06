@@ -1,5 +1,6 @@
 $(document).ready(function() {
-	var socket = io();
+	var path = '/'
+	var socket = io({path: path + 'socket.io'});
 	var username = '';
 
 	$('#username').focus();
@@ -7,12 +8,21 @@ $(document).ready(function() {
 	$('#username-form').submit(function() {
 		//check for empty input
 		if($.trim($('#username').val()).length > 0) {
-			username = $('#username').val();
-			socket.emit('user connect', {'username': username});
-			$('#prompt').hide();
-			$('#m').focus();
+			var usernameCheck = $('#username').val();
+			socket.emit('verify name', usernameCheck);
 		}
 		return false;
+	});
+
+	socket.on('username taken', function(usr) {
+		$('.taken').empty();
+		$('.taken').append(usr + ' is already taken, please try another name.');
+	});
+
+	socket.on('username available', function(usr) {
+		socket.emit('user connect', {'username': usr});
+		$('#prompt').hide();
+		$('#m').focus();
 	});
 
 	$('#chat-form').submit(function() {
@@ -22,7 +32,7 @@ $(document).ready(function() {
 		//check for empty input
 		if(msg.length > 0) {
 			
-			//filter
+			//filter for /me
 			var slashMe = /^\/me/;
 
 			if(slashMe.test(msg)) {
@@ -42,12 +52,18 @@ $(document).ready(function() {
 		socket.emit('user disconnect', {'username': username});
 	});
 
-	//print out chat messages
 	socket.on('chat message', function(msg) {
 		$('#messages').append('<li>' + msg + '</li>');
-		$('#chat').animate({
-	    	scrollTop: $('#messages li:last-child').offset().top + 'px'
-	    }, 50);
+		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
+	});
+
+	socket.on('chat log', function(messages) {
+
+		messages.forEach(function(message) {
+			$('#messages').append('<li>' + message + '</li>');
+		});
+		
+		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
 	});
 
 	socket.on('userlist update', function(update) {

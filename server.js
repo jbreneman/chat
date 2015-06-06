@@ -1,52 +1,91 @@
+//change this if you have the chat in a subdirectory, this defaults to website root
+//needs a trailing slash
+var path = '/';
+
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var io = require('socket.io')(http, {path: path + 'socket.io'});
 
-//serve static files
-app.use(express.static('public'));
+var usersOnline = [];
+var chatLog = [];
 
-//send index since this is an SPA
-app.get('/', function(req, res) {
+app.use(path, express.static('public'));
+
+app.get(path, function(req, res) {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
-var userList = [];
-
-//socket events
 io.on('connection', function(socket) {
 
-	socket.on('user connect', function(msg) {
-		io.emit('chat message', msg.username + ' has connected.');
+	socket.on('verify name', function(name) {
+		var usernameTaken = usersOnline.indexOf(name);
 
-		userList.push(msg.username);
+		if(usernameTaken == -1) {
+			io.to(socket.id).emit('username available', name);
+		} else {
+			io.to(socket.id).emit('username taken', name);
+		}
+	});
+
+	socket.on('user connect', function(msg) {
+
+		var connectMsg = msg.username + ' has connected.';
+
+		io.to(socket.id).emit('chat log', chatLog);
+		io.emit('chat message', connectMsg);
+		logChat(chatLog, connectMsg);
+
+		usersOnline.push(msg.username);
 		
 		var update = {
-			'usernames': userList,
+			'usernames': usersOnline,
 		};
 		io.emit('userlist update', update);
+
+		console.log(usersOnline.toString());
 	});
 
 	socket.on('user disconnect', function(msg) {
-		io.emit('chat message',  msg.username + ' has disconnected.');
 
-		var username = userList.indexOf(msg.username);
+		var disconnectMsg = msg.username + ' has disconnected.';
+
+		io.emit('chat message',  disconnectMsg);
+		logChat(chatLog, disconnectMsg);
+
+		var username = usersOnline.indexOf(msg.username);
 
 		if(username != -1) {
-			userList.splice(username, 1);
+			usersOnline.splice(username, 1);
 		}
 
 		var update = {
-			'usernames': userList,
+			'usernames': usersOnline,
 		};
 		io.emit('userlist update', update);
+		console.log(usersOnline.toString());
 	});
 
-	socket.on('chat message', function(msg) {		
+	socket.on('chat message', function(msg) {
+
+		logChat(chatLog, msg);
+
 		io.emit('chat message', msg);
 	});
 
 });
+
+function logChat(log, msg) {
+	var chatLogMax = 20;
+
+	log.push(msg);
+
+	if(log.length > chatLogMax) {
+		log.shift();
+	}
+
+	return log;
+}
 
 http.listen(3000, function() {
 	console.log('Server started on :3000')
