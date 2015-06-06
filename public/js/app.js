@@ -6,6 +6,8 @@ $(document).ready(function() {
 	$('#username').focus();
 
 	$('#username-form').submit(function() {
+
+		$('.taken').hide();
 		//check for empty input
 		if($.trim($('#username').val()).length > 0) {
 			var usernameCheck = $('#username').val();
@@ -15,7 +17,7 @@ $(document).ready(function() {
 	});
 
 	socket.on('username taken', function(usr) {
-		$('.taken').empty();
+		$('.taken').show().empty();
 		$('.taken').append(usr + ' is already taken, please try another name.');
 	});
 

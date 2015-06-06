@@ -42,8 +42,6 @@ io.on('connection', function(socket) {
 			'usernames': usersOnline,
 		};
 		io.emit('userlist update', update);
-
-		console.log(usersOnline.toString());
 	});
 
 	socket.on('user disconnect', function(msg) {
@@ -63,7 +61,6 @@ io.on('connection', function(socket) {
 			'usernames': usersOnline,
 		};
 		io.emit('userlist update', update);
-		console.log(usersOnline.toString());
 	});
 
 	socket.on('chat message', function(msg) {
