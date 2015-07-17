@@ -4,6 +4,7 @@
   "description": "realtime web chat",
   "dependencies": {},
   "devDependencies": {
+    "autolinker": "^0.18.1",
     "express": "^4.12.4",
     "socket.io": "^1.3.5"
   }

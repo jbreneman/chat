@@ -10,8 +10,7 @@ $(document).ready(function() {
 		$('.taken').hide();
 		//check for empty input
 		if($.trim($('#username').val()).length > 0) {
-			var usernameCheck = $('#username').val();
-			socket.emit('verify name', usernameCheck);
+			socket.emit('verify name', $('#username').val());
 		}
 		return false;
 	});
@@ -35,7 +34,7 @@ $(document).ready(function() {
 		//check for empty input
 		if(msg.length > 0) {
 			
-			//filter for /me
+			//filters before we send the stuff
 			var slashMe = /^\/me/;
 
 			if(slashMe.test(msg)) {
@@ -52,7 +51,9 @@ $(document).ready(function() {
 
 	//send disconnect message when user leaves page
 	$(window).unload(function() {
-		socket.emit('user disconnect', {'username': username});
+		if(username) {
+			socket.emit('user disconnect', {'username': username});
+		}
 	});
 
 	socket.on('chat message', function(msg) {

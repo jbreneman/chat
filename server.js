@@ -2,10 +2,14 @@
 //needs a trailing slash
 var path = '/';
 
-var express = require('express');
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http, {path: path + 'socket.io'});
+var express = require('express'),
+	app = express(),
+	http = require('http').Server(app),
+	io = require('socket.io')(http, {path: path + 'socket.io'}),
+	autolinker = require('autolinker'),
+	parseUrls = new autolinker({
+		phone: false
+		});
 
 var usersOnline = [];
 var chatLog = [];
@@ -65,15 +69,16 @@ io.on('connection', function(socket) {
 
 	socket.on('chat message', function(msg) {
 
+		msg = parseUrls.link(escapeHtml(msg));
 		logChat(chatLog, msg);
 
-		io.emit('chat message', escapeHtml(msg));
+		io.emit('chat message', msg);
 	});
 
 });
 
 function logChat(log, msg) {
-	var chatLogMax = 20;
+	var chatLogMax = 100;
 
 	log.push(msg);
 
@@ -92,6 +97,8 @@ return unsafe
      .replace(/"/g, "&quot;")
      .replace(/'/g, "&#039;");
 	}
+
+	var urlPattern = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
 
 http.listen(3000, function() {
 	console.log('Server started on :3000')
