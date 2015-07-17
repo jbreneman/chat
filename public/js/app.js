@@ -50,7 +50,7 @@ $(document).ready(function() {
 	});
 
 	//send disconnect message when user leaves page
-	$(window).unload(function() {
+	$(window).on('beforeunload', function() {
 		if(username) {
 			socket.emit('user disconnect', {'username': username});
 		}
