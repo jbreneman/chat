@@ -32,15 +32,18 @@ io.on('connection', function(socket) {
 		}
 	});
 
-	socket.on('user connect', function(msg) {
+	socket.on('user connect', function(data) {
 
-		var connectMsg = msg.username + ' has connected.';
+		var connectMsg = {
+				message: data.username + ' has connected.',
+				time: new Date()
+			};
 
 		io.to(socket.id).emit('chat log', chatLog);
 		io.emit('chat message', connectMsg);
 		logChat(chatLog, connectMsg);
 
-		usersOnline.push(msg.username);
+		usersOnline.push(data.username);
 		
 		var update = {
 			'usernames': usersOnline,
@@ -48,14 +51,17 @@ io.on('connection', function(socket) {
 		io.emit('userlist update', update);
 	});
 
-	socket.on('user disconnect', function(msg) {
+	socket.on('user disconnect', function(data) {
 
-		var disconnectMsg = msg.username + ' has disconnected.';
+		var disconnectMsg = {
+			message: data.username + ' has disconnected.',
+			time: new Date()
+		}
 
-		io.emit('chat message',  disconnectMsg);
+		io.emit('chat message', disconnectMsg);
 		logChat(chatLog, disconnectMsg);
 
-		var username = usersOnline.indexOf(msg.username);
+		var username = usersOnline.indexOf(data.username);
 
 		if(username != -1) {
 			usersOnline.splice(username, 1);
@@ -67,20 +73,23 @@ io.on('connection', function(socket) {
 		io.emit('userlist update', update);
 	});
 
-	socket.on('chat message', function(msg) {
+	socket.on('chat message', function(data) {
 
-		msg = parseUrls.link(escapeHtml(msg));
-		logChat(chatLog, msg);
+		data.message = parseUrls.link(escapeHtml(data.message));
 
-		io.emit('chat message', msg);
+		data = parseCommands(data);
+
+		logChat(chatLog, data);
+
+		io.emit('chat message', data);
 	});
 
 });
 
-function logChat(log, msg) {
+function logChat(log, data) {
 	var chatLogMax = 100;
 
-	log.push(msg);
+	log.push(data);
 
 	if(log.length > chatLogMax) {
 		log.shift();
@@ -98,8 +107,30 @@ return unsafe
      .replace(/'/g, "&#039;");
 	}
 
-	var urlPattern = /(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+function parseCommands(data) {
+	var slashMe = /^\/me/;
+	var test = slashMe.test(data.message);
+
+	if(test) {
+		return {
+			message: data.message.replace(slashMe, '*' + data.username),
+			time: data.time
+		}
+	} else {
+		return data;
+	}
+}
 
 http.listen(3000, function() {
 	console.log('Server started on :3000')
+});
+
+//server restart 
+process.on('SIGINT', function () {
+  console.log('Server restarting...');
+  io.emit('chat message', {
+  	message: 'Server is restarting...',
+  	refresh: true
+  });
+  process.exit();
 });

@@ -21,29 +21,25 @@ $(document).ready(function() {
 	});
 
 	socket.on('username available', function(usr) {
-		socket.emit('user connect', {'username': usr});
+		socket.emit('user connect', {username: usr});
 		username = usr;
 		$('#prompt').hide();
 		$('#m').focus();
 	});
 
+	//detect chat message attempt
 	$('#chat-form').submit(function() {
+		var time = new Date();
 
-		var msg = $.trim($('#m').val());
+		var data = {
+			message: $.trim($('#m').val()),
+			username: username,
+			time: time
+		}
 
 		//check for empty input
-		if(msg.length > 0) {
-			
-			//filters before we send the stuff
-			var slashMe = /^\/me/;
-
-			if(slashMe.test(msg)) {
-				msg = msg.replace(slashMe, '*' + username);
-			} else {
-				msg = username + ': ' + msg;
-			}
-
-			socket.emit('chat message', msg);
+		if(data.message.length > 0) {
+			socket.emit('chat message', data);
 			$('#m').val('');
 		}
 		return false;
@@ -52,19 +48,34 @@ $(document).ready(function() {
 	//send disconnect message when user leaves page
 	$(window).on('beforeunload', function() {
 		if(username) {
-			socket.emit('user disconnect', {'username': username});
+			socket.emit('user disconnect', {username: username});
 		}
 	});
 
-	socket.on('chat message', function(msg) {
-		$('#messages').append('<li>' + msg + '</li>');
+	//socket events
+
+	socket.on('chat message', function(data) {
+		
+		var message = formatMessage(data);
+
+		$('#messages').append(message);
 		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
+
+		if(data.hasOwnProperty('refresh') && data.refresh === true) {
+			$('#messages').append('<li>Refreshing page in 10 seconds.');
+			$('#chat').scrollTop($('#chat').prop('scrollHeight'));
+			
+			window.setTimeout(function() {
+				document.location.reload(true);
+			}, 10000)
+		}
 	});
 
 	socket.on('chat log', function(messages) {
 
-		messages.forEach(function(message) {
-			$('#messages').append('<li>' + message + '</li>');
+		messages.forEach(function(data) {
+			var message = formatMessage(data);
+			$('#messages').append(message);
 		});
 		
 		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
@@ -79,5 +90,31 @@ $(document).ready(function() {
 		});
 		
 	});
+
+	function formatMessage(data) {
+		var message = '<li>';
+
+		if(data.hasOwnProperty('time')) {
+			var time = new Date(data.time);
+			var hours = time.getHours();
+
+			hours = ( hours < 12 ) ? hours : hours - 12;
+			hours = hours || 12;
+
+			message += '[' + hours + ':' + time.getMinutes() + '] ';
+		}
+
+		if(data.hasOwnProperty('username')) {
+			message += data.username + ': ';
+		}
+
+		if(data.hasOwnProperty('message')) {
+			message += data.message;
+		}
+
+		message += '</li>';
+
+		return message;
+	}
 
 });

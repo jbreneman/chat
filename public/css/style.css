@@ -48,6 +48,10 @@ li:nth-child(even) {
 	background: #eee;
 }
 
+h2 {
+	background: #eee;
+}
+
 *:focus {
     outline: 0;
 }
@@ -68,7 +72,6 @@ li:nth-child(even) {
 	position: absolute;
 	top: 0;
 	right: 0;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 #in {
