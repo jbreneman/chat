@@ -126,7 +126,7 @@ http.listen(3000, function() {
 });
 
 //server restart 
-process.on('SIGINT', function () {
+process.on('SIGTERM', function () {
   console.log('Server restarting...');
   io.emit('chat message', {
   	message: 'Server is restarting...',

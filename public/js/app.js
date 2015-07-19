@@ -96,16 +96,14 @@ $(document).ready(function() {
 
 		if(data.hasOwnProperty('time')) {
 			var time = new Date(data.time);
-			var hours = time.getHours();
+			var hours = formatHours(time.getHours());
+			var minutes = formatMinutes(time.getMinutes())
 
-			hours = ( hours < 12 ) ? hours : hours - 12;
-			hours = hours || 12;
-
-			message += '[' + hours + ':' + time.getMinutes() + '] ';
+			message += '<span class="time">[' + hours + ':' + minutes + ']</span> ';
 		}
 
 		if(data.hasOwnProperty('username')) {
-			message += data.username + ': ';
+			message += '<span class="username">' + data.username + ':</span> ';
 		}
 
 		if(data.hasOwnProperty('message')) {
@@ -115,6 +113,15 @@ $(document).ready(function() {
 		message += '</li>';
 
 		return message;
+	}
+
+	function formatHours(hours) {
+		hours = ( hours < 12 ) ? hours : hours - 12;
+		return hours = hours || 12;
+	}
+
+	function formatMinutes(minutes) {
+		return minutes > 10 ? minutes : 0 + minutes;
 	}
 
 });
