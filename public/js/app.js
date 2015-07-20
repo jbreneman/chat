@@ -1,7 +1,9 @@
 $(document).ready(function() {
-	var path = '/'
+	var path = '/chat/'
 	var socket = io({path: path + 'socket.io'});
 	var username = '';
+
+	changeFavicon('img/blue-icon.ico');
 
 	$('#username').focus();
 
@@ -61,6 +63,10 @@ $(document).ready(function() {
 		$('#messages').append(message);
 		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
 
+		if(pageHidden) {
+			changeFavicon('img/red-icon.ico');
+		}
+
 		if(data.hasOwnProperty('refresh') && data.refresh === true) {
 			$('#messages').append('<li>Refreshing page in 10 seconds.');
 			$('#chat').scrollTop($('#chat').prop('scrollHeight'));
@@ -89,6 +95,37 @@ $(document).ready(function() {
 			$('#user-list ul').append('<li>' + user + '</li>');
 		});
 		
+	});
+
+	//switch favicon when there's a new chat message if the user is not on the page
+	var hidden, state, visibilityChange, pageHidden = false; 
+
+	if (typeof document.hidden !== "undefined") {
+		hidden = "hidden";
+		visibilityChange = "visibilitychange";
+		state = "visibilityState";
+	} else if (typeof document.mozHidden !== "undefined") {
+		hidden = "mozHidden";
+		visibilityChange = "mozvisibilitychange";
+		state = "mozVisibilityState";
+	} else if (typeof document.msHidden !== "undefined") {
+		hidden = "msHidden";
+		visibilityChange = "msvisibilitychange";
+		state = "msVisibilityState";
+	} else if (typeof document.webkitHidden !== "undefined") {
+		hidden = "webkitHidden";
+		visibilityChange = "webkitvisibilitychange";
+		state = "webkitVisibilityState";
+	}
+
+	$(document).bind(visibilityChange, function() {
+		if(document[state] === 'hidden') {
+			pageHidden = true;
+		} else if(document[state] === 'visible') {
+			pageHidden = false;
+			changeFavicon('img/blue-icon.ico');
+		}
+
 	});
 
 	function formatMessage(data) {
@@ -121,7 +158,20 @@ $(document).ready(function() {
 	}
 
 	function formatMinutes(minutes) {
-		return minutes > 10 ? minutes : 0 + minutes;
+		return minutes > 10 ? minutes : '0' + minutes;
 	}
 
+	function changeFavicon(src) {
+		var link = document.createElement('link'),
+		oldLink = document.getElementById('dynamic-favicon');
+		link.id = 'dynamic-favicon';
+		link.rel = 'shortcut icon';
+		link.href = src;
+
+		if (oldLink) {
+			document.head.removeChild(oldLink);
+		}
+
+		document.head.appendChild(link);
+	}
 });

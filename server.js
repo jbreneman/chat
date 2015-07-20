@@ -1,6 +1,6 @@
 //change this if you have the chat in a subdirectory, this defaults to website root
 //needs a trailing slash
-var path = '/';
+var path = '/chat/';
 
 var express = require('express'),
 	app = express(),
