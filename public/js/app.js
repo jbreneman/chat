@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	var path = '/chat/'
+	var path = '/'
 	var socket = io({path: path + 'socket.io'});
 	var username = '';
 
@@ -158,7 +158,7 @@ $(document).ready(function() {
 	}
 
 	function formatMinutes(minutes) {
-		return minutes > 10 ? minutes : '0' + minutes;
+		return minutes >= 10 ? minutes : '0' + minutes;
 	}
 
 	function changeFavicon(src) {
