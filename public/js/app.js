@@ -25,8 +25,11 @@ $(document).ready(function() {
 	socket.on('username available', function(usr) {
 		socket.emit('user connect', {username: usr});
 		username = usr;
-		$('#prompt').hide();
+		$('#prompt').addClass('fade-out');
 		$('#m').focus();
+		window.setTimeout(function() {
+			$('#prompt').hide();
+		}, 600)
 	});
 
 	//detect chat message attempt
@@ -74,6 +77,10 @@ $(document).ready(function() {
 			window.setTimeout(function() {
 				document.location.reload(true);
 			}, 10000)
+		}
+
+		if(data.hasOwnProperty('newName')) {
+			username = data.newName;
 		}
 	});
 
@@ -128,6 +135,7 @@ $(document).ready(function() {
 
 	});
 
+	//builds the chat message based on what data has been passed to the browser
 	function formatMessage(data) {
 		var message = '<li>';
 
@@ -153,7 +161,7 @@ $(document).ready(function() {
 	}
 
 	function formatHours(hours) {
-		hours = ( hours < 12 ) ? hours : hours - 12;
+		hours = (hours < 12) ? hours : hours - 12;
 		return hours = hours || 12;
 	}
 
