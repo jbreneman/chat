@@ -185,7 +185,7 @@ function parseSlash(data) {
 
 	if(test) {
 		return {
-			message: data.message.replace(slashMe, '*' + data.username),
+			message: data.message.replace(slashMe, '*' + data.username + ' '),
 			time: data.time
 		}
 	} else {

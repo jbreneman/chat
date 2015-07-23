@@ -3,7 +3,7 @@ $(document).ready(function() {
 	var socket = io({path: path + 'socket.io'});
 	var username = '';
 
-	changeFavicon('img/blue-icon.ico');
+	changeFavicon('img/blue-icon.ico?r=' + parseInt(Math.random() * 10000000000));
 
 	$('#username').focus();
 
@@ -67,7 +67,7 @@ $(document).ready(function() {
 		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
 
 		if(pageHidden) {
-			changeFavicon('img/red-icon.ico');
+			changeFavicon('img/red-icon.ico?r=' + parseInt(Math.random() * 10000000000));
 		}
 
 		if(data.hasOwnProperty('refresh') && data.refresh === true) {
@@ -130,7 +130,7 @@ $(document).ready(function() {
 			pageHidden = true;
 		} else if(document[state] === 'visible') {
 			pageHidden = false;
-			changeFavicon('img/blue-icon.ico');
+			changeFavicon('img/blue-icon.ico?r=' + parseInt(Math.random() * 10000000000));
 		}
 
 	});
