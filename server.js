@@ -94,6 +94,8 @@ io.on('connection', function(socket) {
 				if(verifyNameAvailable(bang.newName, usersOnline)) {
 					var username = usersOnline.indexOf(bang.oldName);
 
+					session.username = bang.newName;
+					
 					usersOnline.splice(username, 1);
 					usersOnline.push(bang.newName);
 					usersOnline.sort();
