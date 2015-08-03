@@ -50,13 +50,6 @@ $(document).ready(function() {
 		return false;
 	});
 
-	//send disconnect message when user leaves page
-	$(window).on('beforeunload', function() {
-		if(username) {
-			socket.emit('user disconnect', {username: username});
-		}
-	});
-
 	//socket events
 
 	socket.on('chat message', function(data) {
@@ -135,6 +128,15 @@ $(document).ready(function() {
 
 	});
 
+	//detect if computer has just woken up
+	var myWorker = new Worker('detectWakeup.js');
+
+	myWorker.onmessage = function (ev) {
+		if (ev && ev.data === 'wakeup') {
+			document.location.reload(true);
+		}
+	}
+
 	//builds the chat message based on what data has been passed to the browser
 	function formatMessage(data) {
 		var message = '<li>';
@@ -182,4 +184,5 @@ $(document).ready(function() {
 
 		document.head.appendChild(link);
 	}
+
 });

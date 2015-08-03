@@ -23,6 +23,10 @@ app.get(path, function(req, res) {
 
 io.on('connection', function(socket) {
 
+	var session = {
+		username: ''
+	}
+
 	socket.on('verify name', function(name) {
 		var available = verifyNameAvailable(name, usersOnline);
 
@@ -34,6 +38,8 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('user connect', function(data) {
+
+		session.username = data.username;
 
 		var connectMsg = {
 				message: data.username + ' has connected.',
@@ -59,21 +65,17 @@ io.on('connection', function(socket) {
 		io.emit('userlist update', update);
 	});
 
-	socket.on('user disconnect', function(data) {
+	socket.on('disconnect', function(data) {
 
 		var disconnectMsg = {
-			message: data.username + ' has disconnected.',
+			message: session.username + ' has disconnected.',
 			time: new Date()
 		}
 
 		io.emit('chat message', disconnectMsg);
 		logChat(chatLog, disconnectMsg);
 
-		var username = usersOnline.indexOf(data.username);
-
-		if(username != -1) {
-			usersOnline.splice(username, 1);
-		}
+		usersOnline = removeUser(session.username, usersOnline)
 
 		io.emit('userlist update', {
 			'usernames': usersOnline,
@@ -148,7 +150,7 @@ io.on('connection', function(socket) {
 		}
 
 	});
-
+	
 });
 
 //returns true if available
@@ -168,6 +170,16 @@ function logChat(log, data) {
 	}
 
 	return log;
+}
+
+function removeUser(user, list) {
+	var index = list.indexOf(user);
+
+	if(index != -1) {
+		list.splice(index, 1);
+	}
+
+	return list;
 }
 
 function escapeHtml(unsafe) {
