@@ -1,5 +1,3 @@
-;use strict
-
 var lastTime = (new Date()).getTime();
 var checkInterval = 10000;
 

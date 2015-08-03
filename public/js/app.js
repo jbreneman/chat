@@ -129,7 +129,7 @@ $(document).ready(function() {
 	});
 
 	//detect if computer has just woken up
-	var myWorker = new Worker('detectWakeup.js');
+	var myWorker = new Worker('js/detectWakeup.js');
 
 	myWorker.onmessage = function (ev) {
 		if (ev && ev.data === 'wakeup') {
