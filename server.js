@@ -24,7 +24,7 @@ app.get(path, function(req, res) {
 io.on('connection', function(socket) {
 
 	var session = {
-		username: ''
+		username: undefined
 	}
 
 	socket.on('verify name', function(name) {
@@ -67,19 +67,21 @@ io.on('connection', function(socket) {
 
 	socket.on('disconnect', function(data) {
 
-		var disconnectMsg = {
-			message: session.username + ' has disconnected.',
-			time: new Date()
+		if(session.username !== undefined) {
+			var disconnectMsg = {
+				message: session.username + ' has disconnected.',
+				time: new Date()
+			}
+
+			io.emit('chat message', disconnectMsg);
+			logChat(chatLog, disconnectMsg);
+
+			usersOnline = removeUser(session.username, usersOnline)
+
+			io.emit('userlist update', {
+				'usernames': usersOnline,
+			});
 		}
-
-		io.emit('chat message', disconnectMsg);
-		logChat(chatLog, disconnectMsg);
-
-		usersOnline = removeUser(session.username, usersOnline)
-
-		io.emit('userlist update', {
-			'usernames': usersOnline,
-		});
 	});
 
 	socket.on('chat message', function(data) {
