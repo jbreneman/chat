@@ -13,7 +13,7 @@ var express = require('express'),
 
 var usersOnline = [];
 var chatLog = [];
-var serverMessage = 'Welcome to simple node chat!';
+var serverMessage = undefined;
 
 app.use(path, express.static('public'));
 
@@ -48,11 +48,13 @@ io.on('connection', function(socket) {
 
 		io.to(socket.id).emit('chat log', chatLog);
 
-		io.to(socket.id).emit('chat message', {
-			message: serverMessage,
-			time: new Date()
-		});
-
+		if(serverMessage !== undefined) {
+			io.to(socket.id).emit('chat message', {
+				message: serverMessage,
+				time: new Date()
+			});
+		}
+		
 		io.emit('chat message', connectMsg);
 		logChat(chatLog, connectMsg);
 
