@@ -1,3 +1,5 @@
+'use strict';
+
 //change this if you have the chat in a subdirectory, this defaults to website root
 //needs a trailing slash
 var path = '/';
@@ -14,7 +16,7 @@ var express = require('express'),
 
 var usersOnline = [];
 var chatLog = [];
-var serverMessage = undefined;
+var serverMessage;
 
 app.use(path, express.static('public'));
 
@@ -26,7 +28,7 @@ io.on('connection', function(socket) {
 
 	var session = {
 		username: undefined
-	}
+	};
 
 	socket.on('verify name', function(name) {
 		var available = verifyNameAvailable(name, usersOnline);
@@ -67,13 +69,13 @@ io.on('connection', function(socket) {
 
 		session.username = data.username;
 
-		usersOnline.push(data.username)
+		usersOnline.push(data.username);
 		usersOnline.sort();
 		
 		var update = {
 			'usernames': usersOnline,
 		};
-		
+
 		io.emit('userlist update', update);
 	});
 
@@ -89,12 +91,12 @@ io.on('connection', function(socket) {
 			var disconnectMsg = {
 				message: session.username + ' has disconnected.',
 				time: new Date()
-			}
+			};
 
 			io.emit('chat message', disconnectMsg);
 			logChat(chatLog, disconnectMsg);
 
-			usersOnline = removeUser(session.username, usersOnline)
+			usersOnline = removeUser(session.username, usersOnline);
 
 			io.emit('userlist update', {
 				'usernames': usersOnline,
@@ -129,7 +131,7 @@ io.on('connection', function(socket) {
 			io.emit('chat message', connectMsg);
 			logChat(chatLog, connectMsg);
 
-			usersOnline.push(data.username)
+			usersOnline.push(session.username);
 			usersOnline.sort();
 			
 			var update = {
@@ -156,7 +158,7 @@ io.on('connection', function(socket) {
 
 	socket.on('chat message', function(data) {
 
-		data.message = escapeHtml(data.message)
+		data.message = escapeHtml(data.message);
 		
 		if(parseBang(data)) {
 			var bang = parseBang(data);
@@ -172,7 +174,7 @@ io.on('connection', function(socket) {
 					usersOnline.push(bang.newName);
 					usersOnline.sort();
 
-					var data = {
+					data = {
 						message: bang.oldName + ' changed their name to ' + bang.newName,
 						time: new Date()
 					};
@@ -263,11 +265,11 @@ function removeUser(user, list) {
 
 function escapeHtml(unsafe) {
 return unsafe
-     .replace(/&/g, "&amp;")
-     .replace(/</g, "&lt;")
-     .replace(/>/g, "&gt;")
-     .replace(/"/g, "&quot;")
-     .replace(/'/g, "&#039;");
+     .replace(/&/g, '&amp;')
+     .replace(/</g, '&lt;')
+     .replace(/>/g, '&gt;')
+     .replace(/"/g, '&quot;')
+     .replace(/'/g, '&#039;');
 	}
 
 function parseSlash(data) {
@@ -278,7 +280,7 @@ function parseSlash(data) {
 		return {
 			message: data.message.replace(slashMe, '*' + data.username + ' '),
 			time: data.time
-		}
+		};
 	} else {
 		return false;
 	}
@@ -307,13 +309,13 @@ function parseBang(data) {
 					command: 'name',
 					oldName: data.username,
 					newName: data.message.replace(commands[i], '')
-				}
+				};
 
 			} else if(commandNames[i] === 'servermsg') {
 				return {
 					command: 'servermsg',
 					message: data.message.replace(commands[i], '')
-				}
+				};
 			}
 		}
 	}
@@ -321,7 +323,7 @@ function parseBang(data) {
 }
 
 http.listen(3000, function() {
-	console.log('Server started on :3000')
+	console.log('Server started on :3000');
 });
 
 //server restart 

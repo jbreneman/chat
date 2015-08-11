@@ -1,5 +1,7 @@
+'use strict';
+
 $(document).ready(function() {
-	var path = '/'
+	var path = '/';
 	var socket = io({path: path + 'socket.io'});
 	var username = '';
 
@@ -29,7 +31,7 @@ $(document).ready(function() {
 		$('#m').focus();
 		window.setTimeout(function() {
 			$('#prompt').hide();
-		}, 600)
+		}, 600);
 	});
 
 	//detect chat message attempt
@@ -40,7 +42,7 @@ $(document).ready(function() {
 			message: $.trim($('#m').val()),
 			username: username,
 			time: time
-		}
+		};
 
 		//check for empty input
 		if(data.message.length > 0) {
@@ -69,7 +71,7 @@ $(document).ready(function() {
 			
 			window.setTimeout(function() {
 				document.location.reload(true);
-			}, 10000)
+			}, 10000);
 		}
 
 		if(data.hasOwnProperty('newName')) {
@@ -97,12 +99,12 @@ $(document).ready(function() {
 		
 	});
 
-	socket.on('disconnect', function(data) {
+	socket.on('disconnect', function() {
 		$('#messages').append('<li>You have disconnected from the server. Attempting to reconnect.</li>');
 		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
 	});
 
-	socket.on('reconnect', function(data) {
+	socket.on('reconnect', function() {
 		socket.emit('user connect', {
 			username: username,
 			reconnect: true
@@ -117,22 +119,22 @@ $(document).ready(function() {
 	//switch favicon when there's a new chat message if the user is not on the page
 	var hidden, state, visibilityChange, pageHidden = false; 
 
-	if (typeof document.hidden !== "undefined") {
-		hidden = "hidden";
-		visibilityChange = "visibilitychange";
-		state = "visibilityState";
-	} else if (typeof document.mozHidden !== "undefined") {
-		hidden = "mozHidden";
-		visibilityChange = "mozvisibilitychange";
-		state = "mozVisibilityState";
-	} else if (typeof document.msHidden !== "undefined") {
-		hidden = "msHidden";
-		visibilityChange = "msvisibilitychange";
-		state = "msVisibilityState";
-	} else if (typeof document.webkitHidden !== "undefined") {
-		hidden = "webkitHidden";
-		visibilityChange = "webkitvisibilitychange";
-		state = "webkitVisibilityState";
+	if (typeof document.hidden !== 'undefined') {
+		hidden = 'hidden';
+		visibilityChange = 'visibilitychange';
+		state = 'visibilityState';
+	} else if (typeof document.mozHidden !== 'undefined') {
+		hidden = 'mozHidden';
+		visibilityChange = 'mozvisibilitychange';
+		state = 'mozVisibilityState';
+	} else if (typeof document.msHidden !== 'undefined') {
+		hidden = 'msHidden';
+		visibilityChange = 'msvisibilitychange';
+		state = 'msVisibilityState';
+	} else if (typeof document.webkitHidden !== 'undefined') {
+		hidden = 'webkitHidden';
+		visibilityChange = 'webkitvisibilitychange';
+		state = 'webkitVisibilityState';
 	}
 
 	$(document).bind(visibilityChange, function() {
@@ -161,13 +163,13 @@ $(document).ready(function() {
 		if(data.hasOwnProperty('time')) {
 			var time = new Date(data.time);
 			var hours = formatHours(time.getHours());
-			var minutes = formatMinutes(time.getMinutes())
+			var minutes = formatMinutes(time.getMinutes());
 
-			message += '<span class="time">[' + hours + ':' + minutes + ']</span> ';
+			message += '<span class='time'>[' + hours + ':' + minutes + ']</span> ';
 		}
 
 		if(data.hasOwnProperty('username')) {
-			message += '<span class="username">' + data.username + ':</span> ';
+			message += '<span class='username'>' + data.username + ':</span> ';
 		}
 
 		if(data.hasOwnProperty('message')) {
