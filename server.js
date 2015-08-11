@@ -1,6 +1,7 @@
 //change this if you have the chat in a subdirectory, this defaults to website root
 //needs a trailing slash
 var path = '/';
+var server = '[Server]';
 
 var express = require('express'),
 	app = express(),
@@ -37,26 +38,34 @@ io.on('connection', function(socket) {
 		}
 	});
 
+	//----------------------------------
+	//
+	//	Actual user connection - notifies chat and adds to connected users list
+	//
+	//----------------------------------
+
 	socket.on('user connect', function(data) {
 
-		session.username = data.username;
-
-		var connectMsg = {
+		if(data.reconnect !== true) {
+			var connectMsg = {
 				message: data.username + ' has connected.',
 				time: new Date()
 			};
 
-		io.to(socket.id).emit('chat log', chatLog);
+			io.to(socket.id).emit('chat log', chatLog);
 
-		if(serverMessage !== undefined) {
-			io.to(socket.id).emit('chat message', {
-				message: serverMessage,
-				time: new Date()
-			});
+			if(serverMessage !== undefined) {
+				io.to(socket.id).emit('chat message', {
+					message: serverMessage,
+					username: server
+				});
+			}
+			
+			io.emit('chat message', connectMsg);
+			logChat(chatLog, connectMsg);
 		}
-		
-		io.emit('chat message', connectMsg);
-		logChat(chatLog, connectMsg);
+
+		session.username = data.username;
 
 		usersOnline.push(data.username)
 		usersOnline.sort();
@@ -64,10 +73,17 @@ io.on('connection', function(socket) {
 		var update = {
 			'usernames': usersOnline,
 		};
+		
 		io.emit('userlist update', update);
 	});
 
-	socket.on('disconnect', function(data) {
+	//----------------------------------
+	//
+	//	User disconnect - removes from list and notifies chat
+	//
+	//----------------------------------
+
+	socket.on('disconnect', function(socket) {
 
 		if(session.username !== undefined) {
 			var disconnectMsg = {
@@ -85,6 +101,58 @@ io.on('connection', function(socket) {
 			});
 		}
 	});
+
+	//----------------------------------
+	//
+	//	User reconnect
+	//
+	//----------------------------------
+
+	socket.on('reconnect', function(socket) {
+
+		if(session.username !== undefined) {
+
+			var connectMsg = {
+					message: session.username + ' has reconnected.',
+					time: new Date()
+				};
+
+			io.to(socket.id).emit('chat log', chatLog);
+
+			if(serverMessage !== undefined) {
+				io.to(socket.id).emit('chat message', {
+					message: serverMessage,
+					time: new Date()
+				});
+			}
+			
+			io.emit('chat message', connectMsg);
+			logChat(chatLog, connectMsg);
+
+			usersOnline.push(data.username)
+			usersOnline.sort();
+			
+			var update = {
+				'usernames': usersOnline,
+			};
+
+			io.emit('userlist update', update);
+			}
+
+	});
+
+	//----------------------------------
+	//
+	//	Sends a chat message to client - data format follows. All properties are optional.
+	//
+	//	data = {
+	//		time:
+	//		username:
+	//		message:
+	//	}
+	//
+	//----------------------------------
+	//	TODO: refactor parsing the commands 
 
 	socket.on('chat message', function(data) {
 
@@ -159,7 +227,12 @@ io.on('connection', function(socket) {
 	
 });
 
-//returns true if available
+//----------------------------------
+//
+//	Helper functions
+//
+//----------------------------------
+
 function verifyNameAvailable(name, userList) {
 	var usernameTaken = userList.indexOf(name);
 

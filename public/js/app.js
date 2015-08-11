@@ -97,6 +97,23 @@ $(document).ready(function() {
 		
 	});
 
+	socket.on('disconnect', function(data) {
+		$('#messages').append('<li>You have disconnected from the server. Attempting to reconnect.</li>');
+		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
+	});
+
+	socket.on('reconnect', function(data) {
+		socket.emit('user connect', {
+			username: username,
+			reconnect: true
+		});
+
+		$('#messages').append('<li>You have reconnected to the server.</li>');
+		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
+	});
+
+
+
 	//switch favicon when there's a new chat message if the user is not on the page
 	var hidden, state, visibilityChange, pageHidden = false; 
 
