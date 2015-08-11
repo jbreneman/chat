@@ -3,9 +3,17 @@
 $(document).ready(function() {
 	var path = '/';
 	var socket = io({path: path + 'socket.io'});
-	var username = '';
+	var username;
+
+	if(localStorage.getItem('username') !== null) {
+		username = localStorage.getItem('username');
+
+		socket.emit('user connect', {username: username});
+		$('#prompt').hide();
+	}
 
 	changeFavicon('img/blue-icon.ico?r=' + parseInt(Math.random() * 10000000000));
+
 
 	$('#username').focus();
 
@@ -25,6 +33,11 @@ $(document).ready(function() {
 	});
 
 	socket.on('username available', function(usr) {
+
+		if($('#save').is(':checked')) {
+			localStorage.setItem('username', usr);
+		}
+
 		socket.emit('user connect', {username: usr});
 		username = usr;
 		$('#prompt').addClass('fade-out');
@@ -154,7 +167,7 @@ $(document).ready(function() {
 		if (ev && ev.data === 'wakeup') {
 			document.location.reload(true);
 		}
-	}
+	};
 
 	//builds the chat message based on what data has been passed to the browser
 	function formatMessage(data) {
@@ -165,11 +178,11 @@ $(document).ready(function() {
 			var hours = formatHours(time.getHours());
 			var minutes = formatMinutes(time.getMinutes());
 
-			message += '<span class='time'>[' + hours + ':' + minutes + ']</span> ';
+			message += '<span class="time">[' + hours + ':' + minutes + ']</span> ';
 		}
 
 		if(data.hasOwnProperty('username')) {
-			message += '<span class='username'>' + data.username + ':</span> ';
+			message += '<span class="username">' + data.username + ':</span> ';
 		}
 
 		if(data.hasOwnProperty('message')) {
