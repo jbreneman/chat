@@ -12,7 +12,9 @@ var express = require('express'),
 	autolinker = require('autolinker'),
 	parseUrls = new autolinker({
 		phone: false
-		});
+		}),
+	user = require('./server/user.js'),
+	chat = require('./server/chat.js');
 
 var usersOnline = [];
 var chatLog = [];
@@ -21,7 +23,7 @@ var serverMessage;
 app.use(path, express.static('public'));
 
 app.get(path, function(req, res) {
-	res.sendFile(__dirname + '/public/index.html');
+	res.sendFile('./public/index.html');
 });
 
 io.on('connection', function(socket) {
@@ -30,13 +32,13 @@ io.on('connection', function(socket) {
 		username: undefined
 	};
 
-	socket.on('verify name', function(name) {
-		var available = verifyNameAvailable(name, usersOnline);
+	socket.on('verify name', function(data) {
+		var available = chat.nameAvailable(data, usersOnline);
 
 		if(available) {
-			io.to(socket.id).emit('username available', name);
+			io.to(socket.id).emit('username available', data);
 		} else {
-			io.to(socket.id).emit('username taken', name);
+			io.to(socket.id).emit('username taken', data);
 		}
 	});
 
@@ -48,9 +50,12 @@ io.on('connection', function(socket) {
 
 	socket.on('user connect', function(data) {
 
-		if(data.reconnect !== true) {
+		if(!data.reconnect) {
+
+			session.username = data.username;
+
 			var connectMsg = {
-				message: data.username + ' has connected.',
+				message: session.username + ' has connected.',
 				time: new Date()
 			};
 
@@ -64,19 +69,16 @@ io.on('connection', function(socket) {
 			}
 			
 			io.emit('chat message', connectMsg);
-			logChat(chatLog, connectMsg);
+
+			chat.log(chatLog, connectMsg);
 		}
 
-		session.username = data.username;
+		user.add(session.username, usersOnline);
 
-		usersOnline.push(data.username);
-		usersOnline.sort();
-		
-		var update = {
+		io.emit('userlist update', {
 			'usernames': usersOnline,
-		};
+		});
 
-		io.emit('userlist update', update);
 	});
 
 	//----------------------------------
@@ -85,7 +87,7 @@ io.on('connection', function(socket) {
 	//
 	//----------------------------------
 
-	socket.on('disconnect', function(socket) {
+	socket.on('disconnect', function() {
 
 		if(session.username !== undefined) {
 			var disconnectMsg = {
@@ -94,9 +96,9 @@ io.on('connection', function(socket) {
 			};
 
 			io.emit('chat message', disconnectMsg);
-			logChat(chatLog, disconnectMsg);
+			chat.log(chatLog, disconnectMsg);
 
-			usersOnline = removeUser(session.username, usersOnline);
+			usersOnline = user.remove(session.username, usersOnline);
 
 			io.emit('userlist update', {
 				'usernames': usersOnline,
@@ -129,10 +131,9 @@ io.on('connection', function(socket) {
 			}
 			
 			io.emit('chat message', connectMsg);
-			logChat(chatLog, connectMsg);
+			chat.log(chatLog, connectMsg);
 
-			usersOnline.push(session.username);
-			usersOnline.sort();
+			user.add(session.username, usersOnline);
 			
 			var update = {
 				'usernames': usersOnline,
@@ -165,29 +166,20 @@ io.on('connection', function(socket) {
 
 			if(bang.command === 'name') {
 				
-				if(verifyNameAvailable(bang.newName, usersOnline)) {
-					var username = usersOnline.indexOf(bang.oldName);
+				if(chat.verifyNameAvailable(bang.newName, usersOnline)) {
+
+					user.changeName(bang.oldName, bang.newName, usersOnline);
 
 					session.username = bang.newName;
-					
-					usersOnline.splice(username, 1);
-					usersOnline.push(bang.newName);
-					usersOnline.sort();
 
 					data = {
 						message: bang.oldName + ' changed their name to ' + bang.newName,
 						time: new Date()
 					};
 
-					io.to(socket.id).emit('chat message', {
-						newName: bang.newName,
-						message: 'Name successfully changed to ' + bang.newName,
-						time: new Date()
-					});
-
 					io.emit('chat message', data);
 
-					logChat(chatLog, data);
+					chat.log(chatLog, data);
 
 					io.emit('userlist update', {
 						'usernames': usersOnline,
@@ -212,7 +204,7 @@ io.on('connection', function(socket) {
 
 			data.message = parseUrls.link(data.message);
 			
-			logChat(chatLog, data);
+			chat.log(chatLog, data);
 
 			io.emit('chat message', data);
 
@@ -220,7 +212,7 @@ io.on('connection', function(socket) {
 			//fall back to normal message
 			data.message = parseUrls.link(data.message);
 
-			logChat(chatLog, data);
+			chat.log(chatLog, data);
 
 			io.emit('chat message', data);
 		}
@@ -234,34 +226,6 @@ io.on('connection', function(socket) {
 //	Helper functions
 //
 //----------------------------------
-
-function verifyNameAvailable(name, userList) {
-	var usernameTaken = userList.indexOf(name);
-
-	return usernameTaken === -1 ? true : false;
-}
-
-function logChat(log, data) {
-	var chatLogMax = 100;
-
-	log.push(data);
-
-	if(log.length > chatLogMax) {
-		log.shift();
-	}
-
-	return log;
-}
-
-function removeUser(user, list) {
-	var index = list.indexOf(user);
-
-	if(index != -1) {
-		list.splice(index, 1);
-	}
-
-	return list;
-}
 
 function escapeHtml(unsafe) {
 return unsafe

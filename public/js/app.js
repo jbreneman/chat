@@ -196,7 +196,7 @@ $(document).ready(function() {
 
 	function formatHours(hours) {
 		hours = (hours < 12) ? hours : hours - 12;
-		return hours = hours || 12;
+		return hours || 12;
 	}
 
 	function formatMinutes(minutes) {
