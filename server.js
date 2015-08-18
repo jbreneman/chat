@@ -76,7 +76,7 @@ io.on('connection', function(socket) {
 			chat.log(chatLog, connectMsg);
 		}
 
-		user.add(session.username, usersOnline);
+		user.add(data.username, usersOnline);
 
 		io.emit('userlist update', {
 			'usernames': usersOnline,

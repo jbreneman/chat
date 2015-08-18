@@ -4,7 +4,7 @@ $(document).ready(function() {
 	var path = '/';
 	var socket = io({path: path + 'socket.io'});
 	var username;
-	var restart;
+	var restart = false;
 
 	if(localStorage.getItem('username') !== null) {
 		username = localStorage.getItem('username');
@@ -124,6 +124,7 @@ $(document).ready(function() {
 
 	socket.on('reconnect', function() {
 		if(!restart) {
+			console.log(username);
 			socket.emit('user connect', {
 				username: username,
 				reconnect: true
