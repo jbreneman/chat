@@ -1,14 +1,10 @@
 'use strict';
 
-//change this if you have the chat in a subdirectory, this defaults to website root
-//needs a trailing slash
-var path = '/';
-var server = '[Server]';
-
-var express = require('express'),
+var config = require('./server/config.js'),
+	express = require('express'),
 	app = express(),
 	http = require('http').Server(app),
-	io = require('socket.io')(http, {path: path + 'socket.io'}),
+	io = require('socket.io')(http, {path: config.path + 'socket.io'}),
 	autolinker = require('autolinker'),
 	parseUrls = new autolinker({
 		phone: false
@@ -16,15 +12,22 @@ var express = require('express'),
 	user = require('./server/user.js'),
 	chat = require('./server/chat.js');
 
+//storage variables
 var usersOnline = [];
 var chatLog = [];
 var serverMessage;
 
-app.use(path, express.static('public'));
+app.use(config.path, express.static('public'));
 
-app.get(path, function(req, res) {
+app.get(config.path, function(req, res) {
 	res.sendFile('./public/index.html');
 });
+
+//----------------------------------
+//
+//	Handle all incoming connections. User does not connect to chat until choosing name.
+//
+//----------------------------------
 
 io.on('connection', function(socket) {
 
@@ -64,7 +67,7 @@ io.on('connection', function(socket) {
 			if(serverMessage !== undefined) {
 				io.to(socket.id).emit('chat message', {
 					message: serverMessage,
-					username: server
+					username: config.serverName
 				});
 			}
 			
@@ -159,10 +162,10 @@ io.on('connection', function(socket) {
 
 	socket.on('chat message', function(data) {
 
-		data.message = escapeHtml(data.message);
+		data.message = chat.escapeHtml(data.message);
 		
-		if(parseBang(data)) {
-			var bang = parseBang(data);
+		if(chat.parseBang(data)) {
+			var bang = chat.parseBang(data);
 
 			if(bang.command === 'name') {
 				
@@ -199,8 +202,8 @@ io.on('connection', function(socket) {
 				});
 			}
 
-		} else if(parseSlash(data)) {
-			data = parseSlash(data);
+		} else if(chat.parseSlash(data)) {
+			data = chat.parseSlash(data);
 
 			data.message = parseUrls.link(data.message);
 			
@@ -221,72 +224,7 @@ io.on('connection', function(socket) {
 	
 });
 
-//----------------------------------
-//
-//	Helper functions
-//
-//----------------------------------
-
-function escapeHtml(unsafe) {
-return unsafe
-     .replace(/&/g, '&amp;')
-     .replace(/</g, '&lt;')
-     .replace(/>/g, '&gt;')
-     .replace(/"/g, '&quot;')
-     .replace(/'/g, '&#039;');
-	}
-
-function parseSlash(data) {
-	var slashMe = /^\/me /i;
-	var test = slashMe.test(data.message);
-
-	if(test) {
-		return {
-			message: data.message.replace(slashMe, '*' + data.username + ' '),
-			time: data.time
-		};
-	} else {
-		return false;
-	}
-}
-
-function parseBang(data) {
-
-	//define regex patterns for commands to be parsed
-	var commands = [
-		/^!name /i,
-		/^!servermsg /i
-	];
-
-	var commandNames = [
-		'name',
-		'servermsg'
-	];
-
-	for(var i = 0; i < commands.length; i++) {
-		var test = commands[i].test(data.message);
-
-		if(test) {
-
-			if(commandNames[i] === 'name') {
-				return {
-					command: 'name',
-					oldName: data.username,
-					newName: data.message.replace(commands[i], '')
-				};
-
-			} else if(commandNames[i] === 'servermsg') {
-				return {
-					command: 'servermsg',
-					message: data.message.replace(commands[i], '')
-				};
-			}
-		}
-	}
-	return false;
-}
-
-http.listen(3000, function() {
+http.listen(config.port, function() {
 	console.log('Server started on :3000');
 });
 

@@ -79,12 +79,13 @@ $(document).ready(function() {
 		}
 
 		if(data.hasOwnProperty('refresh') && data.refresh === true) {
-			$('#messages').append('<li>Refreshing page in 10 seconds.');
+			$('#messages').append('<li>Refreshing page in 5 seconds.');
 			$('#chat').scrollTop($('#chat').prop('scrollHeight'));
 			
+			$('body').fadeOut(4500);
 			window.setTimeout(function() {
 				document.location.reload(true);
-			}, 10000);
+			}, 5000);
 		}
 
 		if(data.hasOwnProperty('newName')) {
