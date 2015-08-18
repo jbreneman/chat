@@ -4,6 +4,7 @@ $(document).ready(function() {
 	var path = '/';
 	var socket = io({path: path + 'socket.io'});
 	var username;
+	var restart;
 
 	if(localStorage.getItem('username') !== null) {
 		username = localStorage.getItem('username');
@@ -79,6 +80,7 @@ $(document).ready(function() {
 		}
 
 		if(data.hasOwnProperty('refresh') && data.refresh === true) {
+			restart = true;
 			$('#messages').append('<li>Refreshing page in 5 seconds.');
 			$('#chat').scrollTop($('#chat').prop('scrollHeight'));
 			
@@ -114,21 +116,23 @@ $(document).ready(function() {
 	});
 
 	socket.on('disconnect', function() {
-		$('#messages').append('<li>You have disconnected from the server. Attempting to reconnect.</li>');
-		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
+		if(!restart) {
+			$('#messages').append('<li>You have disconnected from the server. Attempting to reconnect.</li>');
+			$('#chat').scrollTop($('#chat').prop('scrollHeight'));
+		}
 	});
 
 	socket.on('reconnect', function() {
-		socket.emit('user connect', {
-			username: username,
-			reconnect: true
-		});
+		if(!restart) {
+			socket.emit('user connect', {
+				username: username,
+				reconnect: true
+			});
 
-		$('#messages').append('<li>You have reconnected to the server.</li>');
-		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
+			$('#messages').append('<li>You have reconnected to the server.</li>');
+			$('#chat').scrollTop($('#chat').prop('scrollHeight'));
+		}
 	});
-
-
 
 	//switch favicon when there's a new chat message if the user is not on the page
 	var hidden, state, visibilityChange, pageHidden = false; 
