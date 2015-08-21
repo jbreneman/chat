@@ -53,9 +53,9 @@ io.on('connection', function(socket) {
 
 	socket.on('user connect', function(data) {
 
-		if(!data.reconnect) {
+		session.username = data.username;
 
-			session.username = data.username;
+		if(!data.reconnect) {
 
 			var connectMsg = {
 				message: session.username + ' has connected.',
@@ -107,6 +107,7 @@ io.on('connection', function(socket) {
 				'usernames': usersOnline,
 			});
 		}
+		
 	});
 
 	//----------------------------------
@@ -143,7 +144,7 @@ io.on('connection', function(socket) {
 			};
 
 			io.emit('userlist update', update);
-			}
+		}
 
 	});
 
