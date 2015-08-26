@@ -134,3 +134,8 @@ h2 {
 	width: 1px;
 	height: 1px;
 }
+
+.options {
+	position: absolute;
+	bottom: 75px;
+}

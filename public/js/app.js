@@ -66,6 +66,21 @@ $(document).ready(function() {
 		return false;
 	});
 
+	//Save name checkbox on main chat
+	if(localStorage.getItem('username') === null) {
+		$('#save-name').prop('checked', false);
+	} else {
+		$('#save-name').prop('checked', true);
+	}
+
+	$('.save-name').click(function() {
+		if($('.save-name').is(':checked')) {
+			localStorage.setItem('username', username);
+		} else {
+			localStorage.removeItem('username', username);
+		}
+	});
+
 	//socket events
 
 	socket.on('chat message', function(data) {
