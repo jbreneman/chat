@@ -9,4 +9,4 @@ setInterval(function() {
     }
 
     lastTime = currentTime;
-}, checkInterval);
+}, checkInterval
