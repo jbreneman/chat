@@ -226,7 +226,7 @@ io.on('connection', function(socket) {
 });
 
 http.listen(config.port, function() {
-	console.log('Server started on :3000');
+	console.log('Server started on :' + config.port);
 });
 
 //server restart 
