@@ -121,11 +121,11 @@ $(document).ready(function() {
 	});
 
 	socket.on('userlist update', function(update) {
-		$('#user-list li').remove();
+		$('.user-list li').remove();
 
 		var users = update.usernames;
 		users.forEach(function(user) {
-			$('#user-list ul').append('<li>' + user + '</li>');
+			$('.user-list ul').append('<li>' + user + '</li>');
 		});
 		
 	});
@@ -214,6 +214,14 @@ $(document).ready(function() {
 
 		return message;
 	}
+
+	//test
+
+	$('.user-list').click(function() {
+		$('.user-list').toggleClass('show-user-list');
+	});
+
+	//helper functions
 
 	function formatHours(hours) {
 		hours = (hours < 12) ? hours : hours - 12;
