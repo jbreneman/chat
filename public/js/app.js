@@ -219,6 +219,7 @@ $(document).ready(function() {
 
 	$('.user-list').click(function() {
 		$('.user-list').toggleClass('show-user-list');
+		$('.menu').toggleClass('menu--flipped');
 	});
 
 	//helper functions
