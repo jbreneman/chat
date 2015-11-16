@@ -12,7 +12,7 @@ body {
 	word-wrap: break-word;
 }
 
-button {
+#prompt button {
 	font-size: 1.5em;
 	padding: 10px;
 	background: #ddd;
@@ -23,10 +23,14 @@ button {
 	transition: all 0.3s ease;
 }
 
-button:hover {
+#prompt button:hover {
 	background: #333;
 	color: #ddd;
 	transition: all 0.3s ease;
+}
+
+a:hover {
+	cursor: pointer;
 }
 
 h2 {
@@ -111,16 +115,25 @@ h2 {
 	height: 30vh;
 	width: 30vh;
 	position: absolute;
-	bottom: 50px;
-	right: 0;
+	bottom: 45px;
+	right: 5px;
 	overflow: auto;
-	background: black;
+	background: white;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	z-index: 15;
+	visibility: hidden;
+	transition: all .2s ease;
+	opacity: 0;
+}
+
+#emoji.active {
+	visibility: visible;
+	opacity: 1;
 }
 
 #emoji ul {
 	display: inline-flex;
 	flex-wrap: wrap;
-
 }
 
 #emoji li {
@@ -129,11 +142,72 @@ h2 {
 	height: 32px;
 	width: 32px;
 	margin: 5px;
+	padding: 0;
+}
+
+.spinner {
+	width: 25px;
+	height: 25px;
+	margin: 5%;
+	position: absolute;
+	top: 0; right: 0; bottom: 0; left: 0;
+	margin: auto;
+}
+
+.spinner-circle {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+}
+
+.spinner-circle::after {
+	overflow: visible;
+	position: absolute;
+    top: -10px; bottom: -10px;
+    left: -10px; right: -10px;
+    background: linear-gradient(to right, #3acfd5 0%, #3a4ed5 100%);
+    content: '';
+    border-radius: 50%;
+    animation: 2s skew infinite linear;
+}
+
+@keyframes skew {
+  0% {
+    transform: rotate(0) skew(20deg);
+  }
+  50% {
+    transform: rotate(180deg) skew(0deg);
+  }
+  100% {
+    transform: rotate(360deg) skew(20deg);
+  }
 }
 
 .emojione {
 	width: 32px;
 	height: 32px;
+}
+
+.emoji-popout {
+	display: block;
+	position: absolute;
+	z-index: 10;
+	bottom: 3px;
+	right: 3px;
+	border-radius: 4px;
+	padding: 5px 5px 3px 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	opacity: .7;
+	transition: all .2s ease;
+}
+
+.emoji-popout:hover {
+	opacity: 1;
+}
+
+.emoji-popout.active {
+	opacity: 1;
 }
 
 #prompt {

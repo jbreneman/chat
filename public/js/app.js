@@ -112,32 +112,51 @@ $(document).ready(function() {
 		}
 	});
 
-	$.getJSON( "./js/emoji.json", function(data) {
-	  
-	  var emoji = '';
-	  $.each(data, function( key, val ) {
-
-	  	if(emojione.toImage(val.shortname) != val.shortname) {
-	  		emoji += '<li><button class="emoji" data-emoji-shortname="'+ key + '">' + emojione.toImage(val.shortname) + '</button></li>';
-	  	}
-	  });
-
-	  //console.log(items);
-	  $('#emoji').append('<ul>' + emoji + '</ul>');
-
-	  //register emoji button click
-	  $('.emoji').click(function(e) {
-	  	e.preventDefault();
-
-	  	var emojiToAdd = $(this).attr('data-emoji-shortname');
-
-	  	$('#m').insertAtCaret(':' + emojiToAdd + ':');
-
-	  });
-	 
+	$('.emoji-popout').on('mousedown', function(e) {
+		$('#emoji').addClass('active');
+		$(this).addClass('active');
 	});
 
+	$(document).mouseup(function (e)
+	{
+	    var container = $(".active");
 
+	    if (!container.is(e.target) && container.has(e.target).length === 0) {
+	        container.removeClass('active');
+	        $('.emoji-popout').removeClass('active');
+	    }
+	});
+
+	$('.emoji-popout').one('click', function(e) {
+		e.preventDefault();
+
+		$.getJSON("./js/emoji.json")
+			.done(function(data) {
+		  		
+		  		$('.spinner').hide();
+				var emoji = '';
+				$.each(data, function( key, val ) {
+
+					if(emojione.toImage(val.shortname) != val.shortname) {
+						emoji += '<li><a class="emoji" data-emoji-shortname="'+ key + '">' + emojione.toImage(val.shortname) + '</a></li>';
+					}
+				});
+
+				//console.log(items);
+				$('#emoji').append('<ul>' + emoji + '</ul>');
+
+				//register emoji button click
+				$('.emoji').click(function(e) {
+					e.preventDefault();
+
+					var emojiToAdd = $(this).attr('data-emoji-shortname');
+
+					$('#m').insertAtCaret(':' + emojiToAdd + ':');
+
+				});
+		 
+			});
+	});
 
 	//socket events
 
