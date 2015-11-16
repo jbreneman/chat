@@ -107,6 +107,35 @@ h2 {
 	width: 100%;
 }
 
+#emoji {
+	height: 30vh;
+	width: 30vh;
+	position: absolute;
+	bottom: 50px;
+	right: 0;
+	overflow: auto;
+	background: black;
+}
+
+#emoji ul {
+	display: inline-flex;
+	flex-wrap: wrap;
+
+}
+
+#emoji li {
+	background: transparent;
+	list-style-type: none;
+	height: 32px;
+	width: 32px;
+	margin: 5px;
+}
+
+.emojione {
+	width: 32px;
+	height: 32px;
+}
+
 #prompt {
 	z-index: 20;
 	position: absolute;

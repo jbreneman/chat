@@ -1,11 +1,40 @@
 'use strict';
 
+jQuery.fn.extend({
+	insertAtCaret: function(myValue){
+	  return this.each(function(i) {
+	    if (document.selection) {
+	      //For browsers like Internet Explorer
+	      this.focus();
+	      var sel = document.selection.createRange();
+	      sel.text = myValue;
+	      this.focus();
+	    }
+	    else if (this.selectionStart || this.selectionStart == '0') {
+	      //For browsers like Firefox and Webkit based
+	      var startPos = this.selectionStart;
+	      var endPos = this.selectionEnd;
+	      var scrollTop = this.scrollTop;
+	      this.value = this.value.substring(0, startPos)+myValue+this.value.substring(endPos,this.value.length);
+	      this.focus();
+	      this.selectionStart = startPos + myValue.length;
+	      this.selectionEnd = startPos + myValue.length;
+	      this.scrollTop = scrollTop;
+	    } else {
+	      this.value += myValue;
+	      this.focus();
+	    }
+	  });
+	}
+});
+
 $(document).ready(function() {
 	var path = '/';
 	var socket = io({path: path + 'socket.io'});
 	var username;
 	var restart = false;
 
+	//check for name saved locally
 	if(localStorage.getItem('username') !== null) {
 		username = localStorage.getItem('username');
 
@@ -13,9 +42,11 @@ $(document).ready(function() {
 		$('#prompt').hide();
 	}
 
+	//make sure the favicon is set to default.
+	//random number generated to cache bust
 	changeFavicon('img/blue-icon.ico?r=' + parseInt(Math.random() * 10000000000));
 
-
+	//initial username choice
 	$('#username').focus();
 
 	$('#username-form').submit(function() {
@@ -80,6 +111,33 @@ $(document).ready(function() {
 			localStorage.removeItem('username', username);
 		}
 	});
+
+	$.getJSON( "./js/emoji.json", function(data) {
+	  
+	  var emoji = '';
+	  $.each(data, function( key, val ) {
+
+	  	if(emojione.toImage(val.shortname) != val.shortname) {
+	  		emoji += '<li><button class="emoji" data-emoji-shortname="'+ key + '">' + emojione.toImage(val.shortname) + '</button></li>';
+	  	}
+	  });
+
+	  //console.log(items);
+	  $('#emoji').append('<ul>' + emoji + '</ul>');
+
+	  //register emoji button click
+	  $('.emoji').click(function(e) {
+	  	e.preventDefault();
+
+	  	var emojiToAdd = $(this).attr('data-emoji-shortname');
+
+	  	$('#m').insertAtCaret(':' + emojiToAdd + ':');
+
+	  });
+	 
+	});
+
+
 
 	//socket events
 
@@ -212,10 +270,10 @@ $(document).ready(function() {
 
 		message += '</li>';
 
-		return message;
+		return emojione.toImage(message);
 	}
 
-	//test
+	//mobile menu triggers
 
 	$('.user-list').click(function() {
 		$('.user-list').toggleClass('show-user-list');
