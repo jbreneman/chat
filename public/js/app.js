@@ -127,6 +127,17 @@ $(document).ready(function() {
 	    }
 	});
 
+	$('#emoji-search').on('input', function() {
+		var param = $(this).val();
+		
+		$('.emoji').parent().show();
+
+		if(param) {
+			$('.emoji:not([data-emoji-tags*=' + param + '])').parent().hide();
+		}
+		
+	});
+
 	$('.emoji-popout').one('click', function(e) {
 		e.preventDefault();
 
@@ -138,7 +149,14 @@ $(document).ready(function() {
 				$.each(data, function( key, val ) {
 
 					if(emojione.toImage(val.shortname) != val.shortname) {
-						emoji += '<li><a class="emoji" data-emoji-shortname="'+ key + '">' + emojione.toImage(val.shortname) + '</a></li>';
+						var keywords = val.shortname + ',';
+						$.each(val.keywords, function(k, v) {
+							keywords += v + ',';
+						});
+
+						keywords = keywords.replace(/(^,)|(,$)/g, "");
+
+						emoji += '<li><a class="emoji" data-emoji-shortname="'+ key + '" data-emoji-tags="' + keywords + '">' + emojione.toImage(val.shortname) + '</a></li>';
 					}
 				});
 
