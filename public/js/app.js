@@ -113,23 +113,13 @@ $(document).ready(function() {
 	});
 
 	$('.emoji-popout').on('mousedown', function(e) {
-		$('#emoji').addClass('active');
-		$(this).addClass('active');
-	});
-
-	$(document).mouseup(function (e)
-	{
-	    var container = $(".active");
-
-	    if (!container.is(e.target) && container.has(e.target).length === 0) {
-	        container.removeClass('active');
-	        $('.emoji-popout').removeClass('active');
-	    }
+		$('#emoji').toggleClass('active');
+		$(this).toggleClass('active');
 	});
 
 	$('#emoji-search').on('input', function() {
 		var param = $(this).val();
-		
+
 		$('.emoji').parent().show();
 
 		if(param) {
@@ -160,7 +150,6 @@ $(document).ready(function() {
 					}
 				});
 
-				//console.log(items);
 				$('#emoji').append('<ul>' + emoji + '</ul>');
 
 				//register emoji button click
@@ -234,7 +223,6 @@ $(document).ready(function() {
 
 	socket.on('reconnect', function() {
 		if(!restart) {
-			console.log(username);
 			socket.emit('user connect', {
 				username: username,
 				reconnect: true
