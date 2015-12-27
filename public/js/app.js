@@ -34,6 +34,8 @@ $(document).ready(function() {
 	var username;
 	var restart = false;
 
+	$("#chat").perfectScrollbar();
+
 	//check for name saved locally
 	if(localStorage.getItem('username') !== null) {
 		username = localStorage.getItem('username');
@@ -183,6 +185,7 @@ $(document).ready(function() {
 		var message = formatMessage(data);
 
 		$('#messages').append(message);
+		$("#chat").perfectScrollbar('update');
 		$('#chat').scrollTop($('#chat').prop('scrollHeight'));
 
 		if(pageHidden) {
