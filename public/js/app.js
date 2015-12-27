@@ -313,12 +313,19 @@ $(document).ready(function() {
 		return emojione.toImage(message);
 	}
 
+	//user prefs triggers
+	$('.user-prefs__header').click(function() {
+		$('.user-prefs__header-center').toggleClass('user-prefs__header-center--show');
+		$('.user-prefs__header').toggleClass('user-prefs__header--show');
+		$('.user-prefs').toggleClass('user-prefs--show');
+	});
+
 	//mobile menu triggers
 
-	$('.user-list').click(function() {
+/*	$('.user-list').click(function() {
 		$('.user-list').toggleClass('show-user-list');
 		$('.menu').toggleClass('menu--flipped');
-	});
+	});*/
 
 	//helper functions
 
