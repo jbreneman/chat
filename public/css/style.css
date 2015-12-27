@@ -46,13 +46,18 @@ input {
 
 li {
 	line-height: 1.6;
-	padding: 0.5em;
 	font-size: 1.3em;
 	overflow: visible;
-}
-
-li:nth-child(even) {
-	background: #f7f7f7;
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -o-flex;
+	display: flex;
+	-webkit-flex: 1 1 auto;
+	-moz-flex: 1 1 auto;
+	-ms-flex: 1 1 auto;
+	-o-flex: 1 1 auto;
+	flex: 1 1 auto;
 }
 
 h2 {
@@ -73,11 +78,44 @@ h2 {
 }
 
 .time {
-	color: #666;
+	padding: .5em;
+	color: #222;
+	background-color: #666;
+	-ms-align-self: stretch;
+	align-self: stretch;
+	flex-grow: 0;
+	border-bottom: 1px solid #4c4c4c;
+	-webkit-transition: all .1s ease-in;
+	-o-transition: all .1s ease-in;
+	transition: all .1s ease-in;
+}
+
+.time:hover {
+	color: #fff;
 }
 
 .username {
+	padding: .5em;
 	font-weight: bold;
+	background-color: #8c8c8c;
+	-ms-align-self: stretch;
+	align-self: stretch;
+	flex-grow: 0;
+	border-bottom: 1px solid #62737B;
+}
+
+.message {
+	height: 100%;
+	padding: .5em;
+	-ms-align-self: center;
+	align-self: center;
+	flex-grow: 1;
+	border-bottom: 1px solid #dceaf1;
+}
+
+.time + .message {
+	background-color: #8c8c8c;
+	border-bottom: 1px solid #62737B;
 }
 
 #chat {

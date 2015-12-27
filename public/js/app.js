@@ -302,7 +302,7 @@ $(document).ready(function() {
 		}
 
 		if(data.hasOwnProperty('message')) {
-			message += data.message;
+			message += '<span class="message">' + data.message + '</span>';
 		}
 
 		message += '</li>';
