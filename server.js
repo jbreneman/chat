@@ -1,6 +1,6 @@
 'use strict';
 
-var config = require('./server/config.js'),
+var config = require('./src/server/config.js'),
 	express = require('express'),
 	app = express(),
 	http = require('http').Server(app),
@@ -9,8 +9,8 @@ var config = require('./server/config.js'),
 	parseUrls = new autolinker({
 		phone: false
 		}),
-	user = require('./server/user.js'),
-	chat = require('./server/chat.js');
+	user = require('./src/server/user.js'),
+	chat = require('./src/server/chat.js');
 
 //storage variables
 var usersOnline = [];

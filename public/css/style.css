@@ -10,7 +10,7 @@ html {
 }
 
 body {
-	font-family: 'Archivo Narrow', sans-serif;
+	font-family: 'Roboto Condensed', sans-serif;
 	color: #222;
 	word-wrap: break-word;
 }
@@ -58,9 +58,10 @@ li {
 }
 
 h2 {
+	font-family: 'Francois One', sans-serif;
 	text-transform: uppercase;
 	color: #fff;
-	background-color: #666;
+	background-color: #125B7B;
 	font-size: 1.2em;
 	padding: .5em;
 	font-weight: bold;
@@ -81,7 +82,7 @@ h2 {
 
 .time {
 	padding: .5em;
-	background-color: #666;
+	background-color: #2AB4F0;
 	-ms-align-self: stretch;
 	align-self: stretch;
 	flex-grow: 0;
@@ -98,7 +99,7 @@ h2 {
 .username {
 	padding: .5em;
 	font-weight: bold;
-	background-color: #8c8c8c;
+	background-color: #5AC0EE;
 	-ms-align-self: stretch;
 	align-self: stretch;
 	flex-grow: 0;
@@ -117,7 +118,7 @@ h2 {
 }
 
 .time + .message {
-	background-color: #8c8c8c;
+	background-color: #5AC0EE;
 	border-bottom: 1px solid #62737B;
 }
 
@@ -132,7 +133,7 @@ h2 {
 .user-list {
 	width: 250px;
 	height: calc(100% - 50px);
-	background-color: #8c8c8c;
+	background-color: #1982B0;
 	position: absolute;
 	top: 0;
 	right: 0;
