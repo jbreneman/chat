@@ -4,27 +4,27 @@
         <title>Chat!</title>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css?family=Francois+One|Roboto+Condensed:400,400i,700" rel="stylesheet">
         <link rel="stylesheet" href="//cdn.jsdelivr.net/emojione/1.5.2/assets/css/emojione.min.css" />
-        <link rel="stylesheet" href="css/reset.css">
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="assets/css/app.min.css">
     </head>
     <body>
 
-    <div id="prompt">
-        <div>
-            <p class="taken"></p>
-            <form id="username-form" action="">
-                <p>choose a chat nickname:</p><input id="username" autocomplete="off"><button>Chat!</button><br>
-                <input type="checkbox" name="save" id="save"><label>Save Name</label>
-            </form>
-        </div>
+    <div class="prompt">
+        <p class="prompt__message"></p>
+        <form id="username-form" action="">
+            <p>choose a chat nickname:</p><input id="username" autocomplete="off"><button>Chat!</button>
+            <input type="checkbox" name="save" id="save"><label>Save Name</label>
+        </form>
     </div>
-
-    <div class="user-list">
+    
+    <main class="chat">
+        
+    </main>
+    
+    <div class="side-panel">
         <span class="menu"></span>
         <h2 class="users-online">Users Online</h2>
         <ul>

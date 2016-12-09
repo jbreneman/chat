@@ -41,7 +41,7 @@ $(document).ready(function() {
 		username = localStorage.getItem('username');
 
 		socket.emit('user connect', {username: username});
-		$('#prompt').hide();
+		$('.prompt').hide();
 	}
 
 	//make sure the favicon is set to default.
@@ -53,7 +53,7 @@ $(document).ready(function() {
 
 	$('#username-form').submit(function() {
 
-		$('.taken').hide();
+		$('.prompt__message').hide();
 		//check for empty input
 		if($.trim($('#username').val()).length > 0) {
 			socket.emit('verify name', $('#username').val());
@@ -62,8 +62,8 @@ $(document).ready(function() {
 	});
 
 	socket.on('username taken', function(usr) {
-		$('.taken').show().empty();
-		$('.taken').append(usr + ' is already taken, please try another name.');
+		$('.prompt__message').show().empty();
+		$('.prompt__message').append(usr + ' is already taken, please try another name.');
 	});
 
 	socket.on('username available', function(usr) {
@@ -74,10 +74,10 @@ $(document).ready(function() {
 
 		socket.emit('user connect', {username: usr});
 		username = usr;
-		$('#prompt').addClass('fade-out');
+		$('.prompt').addClass('fade-out');
 		$('#m').focus();
 		window.setTimeout(function() {
-			$('#prompt').hide();
+			$('.prompt').hide();
 		}, 600);
 	});
 
@@ -219,11 +219,11 @@ $(document).ready(function() {
 	});
 
 	socket.on('userlist update', function(update) {
-		$('.user-list li').remove();
+		$('.side-panel li').remove();
 
 		var users = update.usernames;
 		users.forEach(function(user) {
-			$('.user-list ul').append('<li>' + user + '</li>');
+			$('.side-panel ul').append('<li>' + user + '</li>');
 		});
 		
 	});
@@ -322,8 +322,8 @@ $(document).ready(function() {
 
 	//mobile menu triggers
 
-/*	$('.user-list').click(function() {
-		$('.user-list').toggleClass('show-user-list');
+/*	$('.side-panel').click(function() {
+		$('.side-panel').toggleClass('show-side-panel');
 		$('.menu').toggleClass('menu--flipped');
 	});*/
 
